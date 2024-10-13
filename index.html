@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <title>Simple Social Media</title>
+        <script>
+            async function loadComments() {
+                const response = await fetch("/api/comments");
+                const comments = await response.json();
+                const commentsList = document.getElementById("comments");
+                commentsList.innerHTML = "";
+
+                comments.forEach((comment) => {
+                    const li = document.createElement("li");
+                    li.textContent = `${comment.name}: ${comment.text}`;
+                    commentsList.appendChild(li);
+                });
+            }
+
+            async function addComment(event) {
+                event.preventDefault();
+                const name = document.getElementById("name").value;
+                const text = document.getElementById("comment").value;
+
+                await fetch("/api/comments", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name, text }),
+                });
+
+                document.getElementById("name").value = "";
+                document.getElementById("comment").value = "";
+                loadComments();
+            }
+
+            window.onload = loadComments;
+        </script>
+    </head>
+    <body>
+        <h1>Welcome to Simple Social Media</h1>
+        <form onsubmit="addComment(event)">
+            <input id="name" type="text" placeholder="Your Name" required />
+            <input
+                id="comment"
+                type="text"
+                placeholder="Your Comment"
+                required
+            />
+            <button type="submit">Submit</button>
+        </form>
+        <ul id="comments"></ul>
+    </body>
+</html>

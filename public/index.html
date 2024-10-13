@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <style>
+            body {
+                font-family: Arial, sans-serif;
+                max-width: 600px;
+                margin: 20px auto;
+                padding: 0 10px;
+            }
+            h1 {
+                text-align: center;
+            }
+            #comments {
+                margin-top: 20px;
+            }
+            .comment {
+                border-bottom: 1px solid #ccc;
+                padding: 10px 0;
+            }
+        </style>
+        <title>Simple Social Media</title>
+        <script>
+            async function loadComments() {
+                const response = await fetch("/api/comments");
+                const comments = await response.json();
+                const commentsList = document.getElementById("comments");
+                commentsList.innerHTML = "";
+
+                comments.forEach((comment) => {
+                    const li = document.createElement("li");
+                    li.textContent = `${comment.name}: ${comment.text}`;
+                    commentsList.appendChild(li);
+                });
+            }
+
+            async function addComment(event) {
+                event.preventDefault();
+                const name = document.getElementById("name").value;
+                const text = document.getElementById("comment").value;
+
+                await fetch("/api/comments", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({ name, text }),
+                });
+
+                document.getElementById("name").value = "";
+                document.getElementById("comment").value = "";
+                loadComments();
+            }
+
+            window.onload = loadComments;
+        </script>
+    </head>
+    <body>
+        <h1>Welcome to Simple Social Media(Kudaiberdi)</h1>
+        <form onsubmit="addComment(event)">
+            <input
+                id="name"
+                type="text"
+                placeholder="Your Name"
+                align="center"
+                required
+            />
+            <br />
+            <br />
+            <textarea
+                id="comment"
+                align="center"
+                placeholder="Your Comment"
+                required
+            ></textarea>
+            <button type="submit">Submit</button>
+        </form>
+        <ul id="comments"></ul>
+    </body>
+</html>
